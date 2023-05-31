@@ -11,31 +11,47 @@ public class CurrencyConverterPage extends PageObjectBase {
     @FindBy(id = "midmarketFromCurrency")
     private WebElement originCurrencyField;
 
+    @FindBy(id = "midmarketFromCurrency-option-1")
+    private WebElement euroSelectionOnOrigin;
+
     @FindBy(id = "midmarketToCurrency")
     private WebElement targetCurrencyField;
+
+    @FindBy(id = "midmarketToCurrency-option-2")
+    private WebElement poundsSelectionOnTarget;
 
     @FindBy(xpath = "//div[@data-key='GBP']")
     private WebElement conversionRateEURtoGBP;
 
+    @FindBy(xpath = "//button[text() = 'Convert']")
+    private WebElement convertButton;
     public CurrencyConverterPage(WebDriver driver){
         super(driver);
     }
 
     public void inputAmount(String amount){
+        amountField.click();
         amountField.sendKeys(amount);
     }
 
-    public void selectOriginCurrency(String originCurrency){
-        originCurrencyField.sendKeys(originCurrency);
+    public void selectOriginCurrency(){
+        originCurrencyField.click();
+        euroSelectionOnOrigin.click();
     }
 
-    public void selectTargetCurrency(String targetCurrency){
-        targetCurrencyField.sendKeys(targetCurrency);
+    public void selectTargetCurrency(){
+        targetCurrencyField.click();
+        poundsSelectionOnTarget.click();
+    }
+
+    public ConvertedCurrencyPage submitCurrencyConversion(){
+        convertButton.click();
+        return new ConvertedCurrencyPage(driver);
     }
 
     public String getConvertRate(){
         String conversionRate = conversionRateEURtoGBP.getText().split("\n")[1];
-        while(conversionRate == "Send") conversionRate = conversionRateEURtoGBP.getText().split("\n")[1];
+        while(conversionRate.length() < 7) conversionRate = conversionRateEURtoGBP.getText().split("\n")[1];
         return conversionRate;
     }
 }
