@@ -11,7 +11,7 @@ import java.time.Duration;
 public class ConvertedCurrencyPage extends PageObjectBase {
     @FindBy(xpath = "//p[contains(@class,'result__BigRate')]")
     private WebElement conversionResult;
-    private WebDriverWait wait;
+    private final WebDriverWait wait;
 
     public ConvertedCurrencyPage(WebDriver driver){
         super(driver);
@@ -21,5 +21,10 @@ public class ConvertedCurrencyPage extends PageObjectBase {
     public String getConversionResult(){
         wait.until(ExpectedConditions.elementToBeClickable(conversionResult));
         return conversionResult.getText();
+    }
+
+    public int getDecimals(){
+        String[] decimals = getConversionResult().split("[ \\.]+");
+        return decimals[1].length();
     }
 }

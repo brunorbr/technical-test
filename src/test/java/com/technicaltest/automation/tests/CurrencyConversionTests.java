@@ -7,6 +7,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.WebDriver;
@@ -19,7 +20,9 @@ public class CurrencyConversionTests {
     private CurrencyConverterPage converterPage;
     private ConvertedCurrencyPage conversionResultPage;
     private CurrencyConversion testConversion;
+    private String valueToCheck;
     private String expectedResult;
+
 
     @BeforeEach
     public void setUpDriver(){
@@ -38,19 +41,21 @@ public class CurrencyConversionTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"0.25", "0.72", "1.0", "1.32", "45.0"})
+    @ValueSource(strings = {"0.25", "0.72", "3.3", "21.32", "145.34", "211.00"})
     public void validateIfConversionIsDoneCorrectly(String valueInEUR) throws InterruptedException {
         converterPage = new CurrencyConverterPage(driver);
         converterPage.inputAmount(valueInEUR);
         converterPage.selectOriginCurrency();
-        expectedResult = getExpectedResult(valueInEUR);
+        valueToCheck = converterPage.getConvertRate();
         converterPage.selectTargetCurrency();
         conversionResultPage = converterPage.submitCurrencyConversion();
-        Assertions.assertEquals(expectedResult, conversionResultPage.getConversionResult());
+        Assertions.assertEquals(getExpectedResult(valueInEUR,
+                valueToCheck, conversionResultPage.getDecimals()),
+                conversionResultPage.getConversionResult());
     }
 
-    public String getExpectedResult(String EUR){
-        testConversion = new CurrencyConversion(EUR, converterPage.getConvertRate());
+    public String getExpectedResult(String EUR, String rate, int scale){
+        testConversion = new CurrencyConversion(EUR, rate, scale);
         return String.valueOf(testConversion.getConvertedValue() + " British Pounds");
     }
 }

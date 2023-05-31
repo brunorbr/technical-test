@@ -6,15 +6,15 @@ import java.math.RoundingMode;
 public class CurrencyConversion {
     private BigDecimal originValue;
     private BigDecimal conversionRate;
-    //private int scale;
+    private int scale;
 
-    public CurrencyConversion(String origin, String rate/*, int scale*/){
+    public CurrencyConversion(String origin, String rate, int scale){
         this.originValue =  new BigDecimal(origin);
         this.conversionRate = new BigDecimal(rate);
-        //this.scale = scale;
+        this.scale = scale;
     }
 
     public BigDecimal getConvertedValue(){
-        return originValue.multiply(conversionRate).setScale(7, RoundingMode.UNNECESSARY);
+        return originValue.multiply(conversionRate).setScale(scale, RoundingMode.CEILING);
     }
 }
